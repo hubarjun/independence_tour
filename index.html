@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://cdn.aframe.io/controllers/teleport-controls.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.5.4/dist/aframe-extras.min.js"></script>
+  </head>
+  <body>
+    <a-scene>
+      <a-sky color="black"></a-sky>
+
+      <a-entity
+        gltf-model="https://cdn.glitch.me/d81e3a3b-6b97-4169-bb38-dd9df259a142/animatedlab.glb?v=1741919377670"
+        animation-mixer
+        position="0 -1 0"
+        scale="2 2 2"
+      ></a-entity>
+
+      <a-entity
+        id="rig"
+        position="0 0 0"
+        movement-controls="constrainToNavMesh: true"
+      >
+        <a-camera>
+          <a-cursor color="white"></a-cursor>
+        </a-camera>
+
+        <a-entity
+          id="leftHand"
+          oculus-touch-controls="hand: left"
+          thumbstick-teleport
+          teleport-controls="cameraRig: #rig; teleportOrigin: #camera;"
+        >
+        </a-entity>
+
+        <a-entity
+          id="rightHand"
+          oculus-touch-controls="hand: right"
+          thumbstick-rotate
+        >
+        </a-entity>
+      </a-entity>
+
+      <a-sound src="mars-ambient.mp3" autoplay="true" loop="true"></a-sound>
+    </a-scene>
+    <script>
+      AFRAME.registerComponent("force-play-animation", {
+        init: function () {
+          let model = this.el;
+          model.addEventListener("model-loaded", function () {
+            let mixer = model.getObject3D("mesh").animations;
+            if (mixer && mixer.length > 0) {
+              model.setAttribute("animation-mixer", "clip: *"); // Plays all animations
+            }
+          });
+        },
+      });
+
+      // Apply this component to the animated model
+      document
+        .querySelector("#animatedModel")
+        .setAttribute("force-play-animation", "");
+    </script>
+  </body>
+</html>
